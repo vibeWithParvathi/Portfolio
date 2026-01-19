@@ -369,6 +369,7 @@ body {
     margin-bottom: 32px;
     opacity: 0.9;
     line-height: 1.8;
+    text-align: justify;
 }
 
 .action-buttons {
@@ -602,6 +603,7 @@ section {
     color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.6;
+    text-align: justify;
 }
 
 /* Slider Controls */
@@ -762,6 +764,7 @@ section {
     color: var(--text-secondary);
     margin-bottom: 20px;
     line-height: 1.7;
+    text-align: justify;
 }
 
 .tech-badges {
@@ -798,6 +801,7 @@ section {
     color: var(--text-secondary);
     margin-bottom: 32px;
     line-height: 1.8;
+    text-align: justify;
 }
 
 .contact-methods {
@@ -821,6 +825,7 @@ section {
 .social-container {
     display: flex;
     gap: 12px;
+    justify-content: center;
 }
 
 .social-button {
