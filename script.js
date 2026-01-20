@@ -700,6 +700,13 @@ window.addEventListener('load', function() {
     
     // Delete a single testimonial
     async function deleteTestimonial(id) {
+        // Validate ID
+        if (!id || typeof id !== 'string') {
+            console.error('❌ Invalid testimonial ID:', id);
+            alert('Error: Invalid testimonial ID. Please refresh the page and try again.');
+            return;
+        }
+        
         const password = promptPassword('delete this testimonial');
         
         if (password === null) {
@@ -886,8 +893,13 @@ window.addEventListener('load', function() {
         deleteButtons.forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                const testimonialId = parseInt(this.getAttribute('data-id'));
-                deleteTestimonial(testimonialId);
+                const testimonialId = this.getAttribute('data-id');
+                if (testimonialId) {
+                    deleteTestimonial(testimonialId);
+                } else {
+                    console.error('❌ Testimonial ID not found');
+                    alert('Error: Testimonial ID not found. Please refresh the page and try again.');
+                }
             });
         });
         
