@@ -598,9 +598,17 @@ window.addEventListener('load', function() {
             // Save to Firebase or localStorage
             if (useFirebase) {
                 try {
+                    console.log('💾 Attempting to save testimonial to Firebase...');
+                    console.log('📝 Testimonial data:', testimonial);
+                    
                     const { collection, addDoc, db } = window.firebaseDB;
                     const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
-                    await addDoc(testimonialsRef, testimonial);
+                    const docRef = await addDoc(testimonialsRef, testimonial);
+                    
+                    console.log('✅ Testimonial saved successfully to Firebase!');
+                    console.log('🆔 Document ID:', docRef.id);
+                    console.log('📍 Collection path: testimonials/' + docRef.id);
+                    console.log('🔗 View in Firebase Console: https://console.firebase.google.com/project/portfolio-testimonials-c493c/firestore/data/~2Ftestimonials~2F' + docRef.id);
                     
                     // Reset form
                     testimonialForm.reset();
@@ -608,7 +616,7 @@ window.addEventListener('load', function() {
                     organizationRow.style.display = 'none';
                     
                     // Show success message and display testimonials
-                    alert('Thank you for your testimonial! It has been submitted successfully and is now visible to all visitors.');
+                    alert('Thank you for your testimonial! It has been submitted successfully and is now visible to all visitors.\n\nDocument ID: ' + docRef.id + '\n\nCheck the console for Firebase link.');
                     
                     // Switch to display view and reload testimonials
                     formContainer.style.display = 'none';
@@ -616,10 +624,12 @@ window.addEventListener('load', function() {
                     toggleFormBtn.style.display = 'inline-block';
                     toggleDisplayBtn.style.display = 'none';
                     await loadAndDisplayTestimonials();
-                    updateClearAllButton();
+                    await updateClearAllButton();
                 } catch (error) {
-                    console.error('Error saving to Firebase:', error);
-                    alert('Error saving testimonial. Please try again or contact the site owner.');
+                    console.error('❌ Error saving to Firebase:', error);
+                    console.error('Error details:', error.message);
+                    console.error('Error code:', error.code);
+                    alert('Error saving testimonial. Please check the console for details or contact the site owner.');
                 }
             } else {
                 // Fallback to localStorage
@@ -662,14 +672,17 @@ window.addEventListener('load', function() {
                         ...docSnap.data()
                     });
                 });
+                console.log(`✅ Loaded ${testimonials.length} testimonial(s) from Firebase`);
                 return testimonials;
             } catch (error) {
-                console.error('Error fetching testimonials from Firebase:', error);
+                console.error('❌ Error fetching testimonials from Firebase:', error);
+                console.log('⚠️ Falling back to localStorage');
                 // Fallback to localStorage
                 const stored = localStorage.getItem(STORAGE_KEY);
                 return stored ? JSON.parse(stored) : [];
             }
         } else {
+            console.log('⚠️ Firebase not available, using localStorage');
             // Fallback to localStorage
             const stored = localStorage.getItem(STORAGE_KEY);
             return stored ? JSON.parse(stored) : [];
@@ -983,28 +996,10 @@ window.addEventListener('load', function() {
     }
     
     // Load testimonials on page load
-    window.addEventListener('DOMContentLoaded', function() {
-        const testimonials = getTestimonials();
-        if (testimonials.length > 0) {
-            testimonialsDisplay.style.display = 'block';
-            formContainer.style.display = 'none';
-            toggleFormBtn.style.display = 'inline-block';
-            toggleDisplayBtn.style.display = 'none';
-            loadAndDisplayTestimonials();
-            updateClearAllButton();
-        } else {
-            testimonialsDisplay.style.display = 'none';
-            formContainer.style.display = 'block';
-            toggleFormBtn.style.display = 'none';
-            toggleDisplayBtn.style.display = 'none';
-            if (clearAllBtn) clearAllBtn.style.display = 'none';
-        }
-    });
-    
-    // Initial load of testimonials on page load
-    (async function() {
-        // Wait a bit for Firebase to initialize
-        await new Promise(resolve => setTimeout(resolve, 500));
+    window.addEventListener('DOMContentLoaded', async function() {
+        // Wait for Firebase to initialize (if using Firebase)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         const testimonials = await getTestimonials();
         if (testimonials.length > 0) {
             testimonialsDisplay.style.display = 'block';
@@ -1013,7 +1008,13 @@ window.addEventListener('load', function() {
             toggleDisplayBtn.style.display = 'none';
             await loadAndDisplayTestimonials();
             await updateClearAllButton();
+        } else {
+            testimonialsDisplay.style.display = 'none';
+            formContainer.style.display = 'block';
+            toggleFormBtn.style.display = 'none';
+            toggleDisplayBtn.style.display = 'none';
+            if (clearAllBtn) clearAllBtn.style.display = 'none';
         }
-    })();
+    });
 })();
 

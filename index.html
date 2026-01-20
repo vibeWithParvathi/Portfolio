@@ -875,6 +875,29 @@
         };
         
         console.log('Firebase initialized');
+        
+        // Debug: Check if testimonials exist on page load
+        (async function() {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for Firebase to be ready
+                const { collection, getDocs, query, orderBy, db } = window.firebaseDB;
+                const testimonialsRef = collection(db, 'testimonials');
+                const q = query(testimonialsRef, orderBy('date', 'desc'));
+                const querySnapshot = await getDocs(q);
+                console.log('📊 Total testimonials in Firebase:', querySnapshot.size);
+                if (querySnapshot.size > 0) {
+                    console.log('✅ Testimonials found!');
+                    querySnapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        console.log(`  - ${data.name} (${data.type}) - Rating: ${data.rating}/5`);
+                    });
+                } else {
+                    console.log('⚠️ No testimonials found in Firebase yet. Submit one to test!');
+                }
+            } catch (error) {
+                console.error('❌ Error checking testimonials:', error);
+            }
+        })();
     </script>
     <script src="script.js"></script>
 </body>
