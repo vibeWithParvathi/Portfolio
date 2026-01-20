@@ -845,7 +845,7 @@
     <!-- Firebase SDK v9+ (modular) -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
         // Firebase configuration from Firebase Console
         const firebaseConfig = {
@@ -871,7 +871,8 @@
             deleteDoc: deleteDoc,
             doc: doc,
             query: query,
-            orderBy: orderBy
+            orderBy: orderBy,
+            updateDoc: updateDoc
         };
         
         console.log('✅ Firebase initialized successfully');

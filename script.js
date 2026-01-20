@@ -671,10 +671,14 @@ window.addEventListener('load', function() {
             const querySnapshot = await getDocs(q);
             const testimonials = [];
             querySnapshot.forEach((docSnap) => {
-                testimonials.push({
-                    id: docSnap.id,
-                    ...docSnap.data()
-                });
+                const data = docSnap.data();
+                // Filter out deleted testimonials (only show active ones)
+                if (!data.deleted) {
+                    testimonials.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
             });
             console.log(`✅ Loaded ${testimonials.length} testimonial(s) from Firebase`);
             return testimonials;
@@ -721,8 +725,16 @@ window.addEventListener('load', function() {
         }
         
         try {
-            const { deleteDoc, doc, db } = window.firebaseDB;
-            await deleteDoc(doc(db, TESTIMONIALS_COLLECTION, id));
+            // Mark as deleted instead of actually deleting from Firebase
+            const { updateDoc, doc, db } = window.firebaseDB;
+            const testimonialRef = doc(db, TESTIMONIALS_COLLECTION, id);
+            await updateDoc(testimonialRef, {
+                deleted: true,
+                deletedAt: new Date().toISOString()
+            });
+            
+            console.log('✅ Testimonial marked as deleted in Firebase (hidden from frontend)');
+            
             await loadAndDisplayTestimonials();
             updateClearAllButton();
             
@@ -734,10 +746,10 @@ window.addEventListener('load', function() {
                 toggleDisplayBtn.style.display = 'none';
             }
             
-            alert('Testimonial deleted successfully!');
+            alert('Testimonial removed from display successfully! (It remains in Firebase database)');
         } catch (error) {
-            console.error('Error deleting testimonial:', error);
-            alert('Error deleting testimonial. Please try again.');
+            console.error('Error marking testimonial as deleted:', error);
+            alert('Error removing testimonial. Please try again.');
         }
     }
     
@@ -755,7 +767,7 @@ window.addEventListener('load', function() {
             return;
         }
         
-        if (!confirm('Are you sure you want to delete ALL testimonials? This action cannot be undone.')) {
+        if (!confirm('Are you sure you want to remove ALL testimonials from display? They will remain in Firebase database but will be hidden from the frontend.')) {
             return;
         }
         
@@ -768,14 +780,27 @@ window.addEventListener('load', function() {
         }
         
         try {
-            const { collection, getDocs, deleteDoc, doc, db } = window.firebaseDB;
+            // Mark all as deleted instead of actually deleting from Firebase
+            const { collection, getDocs, updateDoc, doc, db } = window.firebaseDB;
             const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
             const querySnapshot = await getDocs(testimonialsRef);
-            const deletePromises = [];
+            const updatePromises = [];
+            const deletedAt = new Date().toISOString();
+            
             querySnapshot.forEach((docSnap) => {
-                deletePromises.push(deleteDoc(doc(db, TESTIMONIALS_COLLECTION, docSnap.id)));
+                const data = docSnap.data();
+                // Only mark as deleted if not already deleted
+                if (!data.deleted) {
+                    updatePromises.push(updateDoc(doc(db, TESTIMONIALS_COLLECTION, docSnap.id), {
+                        deleted: true,
+                        deletedAt: deletedAt
+                    }));
+                }
             });
-            await Promise.all(deletePromises);
+            
+            await Promise.all(updatePromises);
+            
+            console.log(`✅ Marked ${updatePromises.length} testimonial(s) as deleted in Firebase (hidden from frontend)`);
             
             testimonialsDisplay.style.display = 'none';
             formContainer.style.display = 'block';
@@ -783,10 +808,10 @@ window.addEventListener('load', function() {
             toggleDisplayBtn.style.display = 'none';
             if (clearAllBtn) clearAllBtn.style.display = 'none';
             
-            alert('All testimonials deleted successfully!');
+            alert(`All testimonials removed from display! (${updatePromises.length} testimonial(s) remain in Firebase database)`);
         } catch (error) {
-            console.error('Error deleting all testimonials:', error);
-            alert('Error deleting testimonials. Please try again.');
+            console.error('Error marking all testimonials as deleted:', error);
+            alert('Error removing testimonials. Please try again.');
         }
     }
     
