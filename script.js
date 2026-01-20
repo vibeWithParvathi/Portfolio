@@ -480,7 +480,6 @@ window.addEventListener('load', function() {
 
 // Testimonials System - Form Submission and Display
 (function() {
-    const STORAGE_KEY = 'portfolio_testimonials';
     const DELETE_PASSWORD = 'admin123'; // Change this to your desired password
     const TESTIMONIALS_COLLECTION = 'testimonials';
     
@@ -597,48 +596,27 @@ window.addEventListener('load', function() {
                 date: new Date().toISOString()
             };
             
-            // Save to Firebase or localStorage
-            if (useFirebase()) {
-                try {
-                    console.log('💾 Attempting to save testimonial to Firebase...');
-                    console.log('📝 Testimonial data:', testimonial);
-                    
-                    const { collection, addDoc, db } = window.firebaseDB;
-                    const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
-                    const docRef = await addDoc(testimonialsRef, testimonial);
-                    
-                    console.log('✅ Testimonial saved successfully to Firebase!');
-                    console.log('🆔 Document ID:', docRef.id);
-                    console.log('📍 Collection path: testimonials/' + docRef.id);
-                    console.log('🔗 View in Firebase Console: https://console.firebase.google.com/project/portfolio-testimonials-c493c/firestore/data/~2Ftestimonials~2F' + docRef.id);
-                    
-                    // Reset form
-                    testimonialForm.reset();
-                    companyRow.style.display = 'none';
-                    organizationRow.style.display = 'none';
-                    
-                    // Show success message and display testimonials
-                    alert('Thank you for your testimonial! It has been submitted successfully and is now visible to all visitors.\n\nDocument ID: ' + docRef.id + '\n\nCheck the console for Firebase link.');
-                    
-                    // Switch to display view and reload testimonials
-                    formContainer.style.display = 'none';
-                    testimonialsDisplay.style.display = 'block';
-                    toggleFormBtn.style.display = 'inline-block';
-                    toggleDisplayBtn.style.display = 'none';
-                    await loadAndDisplayTestimonials();
-                    await updateClearAllButton();
-                } catch (error) {
-                    console.error('❌ Error saving to Firebase:', error);
-                    console.error('Error details:', error.message);
-                    console.error('Error code:', error.code);
-                    alert('Error saving testimonial. Please check the console for details or contact the site owner.');
-                }
-            } else {
-                // Fallback to localStorage
-                testimonial.id = Date.now();
-                const testimonials = await getTestimonials();
-                testimonials.push(testimonial);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
+            // Save to Firebase (required)
+            const firebaseReady = await waitForFirebase(3000);
+            
+            if (!firebaseReady || !useFirebase()) {
+                alert('❌ Firebase is not available. Please refresh the page and try again. If the problem persists, contact the site owner.');
+                console.error('❌ Firebase not available for saving testimonial');
+                return;
+            }
+            
+            try {
+                console.log('💾 Attempting to save testimonial to Firebase...');
+                console.log('📝 Testimonial data:', testimonial);
+                
+                const { collection, addDoc, db } = window.firebaseDB;
+                const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
+                const docRef = await addDoc(testimonialsRef, testimonial);
+                
+                console.log('✅ Testimonial saved successfully to Firebase!');
+                console.log('🆔 Document ID:', docRef.id);
+                console.log('📍 Collection path: testimonials/' + docRef.id);
+                console.log('🔗 View in Firebase Console: https://console.firebase.google.com/project/portfolio-testimonials-c493c/firestore/data/~2Ftestimonials~2F' + docRef.id);
                 
                 // Reset form
                 testimonialForm.reset();
@@ -646,7 +624,7 @@ window.addEventListener('load', function() {
                 organizationRow.style.display = 'none';
                 
                 // Show success message and display testimonials
-                alert('Thank you for your testimonial! It has been submitted successfully.');
+                alert('Thank you for your testimonial! It has been submitted successfully and is now visible to all visitors.\n\nDocument ID: ' + docRef.id + '\n\nCheck the console for Firebase link.');
                 
                 // Switch to display view and reload testimonials
                 formContainer.style.display = 'none';
@@ -654,40 +632,55 @@ window.addEventListener('load', function() {
                 toggleFormBtn.style.display = 'inline-block';
                 toggleDisplayBtn.style.display = 'none';
                 await loadAndDisplayTestimonials();
-                updateClearAllButton();
+                await updateClearAllButton();
+            } catch (error) {
+                console.error('❌ Error saving to Firebase:', error);
+                console.error('Error details:', error.message);
+                console.error('Error code:', error.code);
+                alert('Error saving testimonial. Please check the console for details or contact the site owner.');
             }
         });
     }
     
-    // Get testimonials from Firebase or localStorage (fallback)
-    async function getTestimonials() {
-        if (useFirebase()) {
-            try {
-                const { collection, getDocs, query, orderBy, db } = window.firebaseDB;
-                const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
-                const q = query(testimonialsRef, orderBy('date', 'desc'));
-                const querySnapshot = await getDocs(q);
-                const testimonials = [];
-                querySnapshot.forEach((docSnap) => {
-                    testimonials.push({
-                        id: docSnap.id,
-                        ...docSnap.data()
-                    });
-                });
-                console.log(`✅ Loaded ${testimonials.length} testimonial(s) from Firebase`);
-                return testimonials;
-            } catch (error) {
-                console.error('❌ Error fetching testimonials from Firebase:', error);
-                console.log('⚠️ Falling back to localStorage');
-                // Fallback to localStorage
-                const stored = localStorage.getItem(STORAGE_KEY);
-                return stored ? JSON.parse(stored) : [];
+    // Wait for Firebase to be available (with timeout)
+    async function waitForFirebase(maxWait = 3000) {
+        const startTime = Date.now();
+        while (Date.now() - startTime < maxWait) {
+            if (useFirebase()) {
+                return true;
             }
-        } else {
-            console.log('⚠️ Firebase not available, using localStorage');
-            // Fallback to localStorage
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : [];
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+    
+    // Get testimonials from Firebase (required)
+    async function getTestimonials() {
+        // Wait for Firebase to initialize
+        const firebaseReady = await waitForFirebase(3000);
+        
+        if (!firebaseReady || !useFirebase()) {
+            console.error('❌ Firebase not available for fetching testimonials');
+            return [];
+        }
+        
+        try {
+            const { collection, getDocs, query, orderBy, db } = window.firebaseDB;
+            const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
+            const q = query(testimonialsRef, orderBy('date', 'desc'));
+            const querySnapshot = await getDocs(q);
+            const testimonials = [];
+            querySnapshot.forEach((docSnap) => {
+                testimonials.push({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                });
+            });
+            console.log(`✅ Loaded ${testimonials.length} testimonial(s) from Firebase`);
+            return testimonials;
+        } catch (error) {
+            console.error('❌ Error fetching testimonials from Firebase:', error);
+            return [];
         }
     }
     
@@ -719,36 +712,22 @@ window.addEventListener('load', function() {
             return;
         }
         
-        if (useFirebase()) {
-            try {
-                const { deleteDoc, doc, db } = window.firebaseDB;
-                await deleteDoc(doc(db, TESTIMONIALS_COLLECTION, id));
-                await loadAndDisplayTestimonials();
-                updateClearAllButton();
-                
-                const testimonials = await getTestimonials();
-                if (testimonials.length === 0) {
-                    testimonialsDisplay.style.display = 'none';
-                    formContainer.style.display = 'block';
-                    toggleFormBtn.style.display = 'none';
-                    toggleDisplayBtn.style.display = 'none';
-                }
-                
-                alert('Testimonial deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting testimonial:', error);
-                alert('Error deleting testimonial. Please try again.');
-            }
-        } else {
-            const testimonials = await getTestimonials();
-            const filtered = testimonials.filter(function(t) {
-                return t.id !== id;
-            });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+        const firebaseReady = await waitForFirebase(3000);
+        
+        if (!firebaseReady || !useFirebase()) {
+            alert('❌ Firebase is not available. Please refresh the page and try again.');
+            console.error('❌ Firebase not available for deleting testimonial');
+            return;
+        }
+        
+        try {
+            const { deleteDoc, doc, db } = window.firebaseDB;
+            await deleteDoc(doc(db, TESTIMONIALS_COLLECTION, id));
             await loadAndDisplayTestimonials();
             updateClearAllButton();
             
-            if (filtered.length === 0) {
+            const testimonials = await getTestimonials();
+            if (testimonials.length === 0) {
                 testimonialsDisplay.style.display = 'none';
                 formContainer.style.display = 'block';
                 toggleFormBtn.style.display = 'none';
@@ -756,6 +735,9 @@ window.addEventListener('load', function() {
             }
             
             alert('Testimonial deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting testimonial:', error);
+            alert('Error deleting testimonial. Please try again.');
         }
     }
     
@@ -777,30 +759,24 @@ window.addEventListener('load', function() {
             return;
         }
         
-        if (useFirebase()) {
-            try {
-                const { collection, getDocs, deleteDoc, doc, db } = window.firebaseDB;
-                const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
-                const querySnapshot = await getDocs(testimonialsRef);
-                const deletePromises = [];
-                querySnapshot.forEach((docSnap) => {
-                    deletePromises.push(deleteDoc(doc(db, TESTIMONIALS_COLLECTION, docSnap.id)));
-                });
-                await Promise.all(deletePromises);
-                
-                testimonialsDisplay.style.display = 'none';
-                formContainer.style.display = 'block';
-                toggleFormBtn.style.display = 'none';
-                toggleDisplayBtn.style.display = 'none';
-                if (clearAllBtn) clearAllBtn.style.display = 'none';
-                
-                alert('All testimonials deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting all testimonials:', error);
-                alert('Error deleting testimonials. Please try again.');
-            }
-        } else {
-            localStorage.removeItem(STORAGE_KEY);
+        const firebaseReady = await waitForFirebase(3000);
+        
+        if (!firebaseReady || !useFirebase()) {
+            alert('❌ Firebase is not available. Please refresh the page and try again.');
+            console.error('❌ Firebase not available for clearing testimonials');
+            return;
+        }
+        
+        try {
+            const { collection, getDocs, deleteDoc, doc, db } = window.firebaseDB;
+            const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
+            const querySnapshot = await getDocs(testimonialsRef);
+            const deletePromises = [];
+            querySnapshot.forEach((docSnap) => {
+                deletePromises.push(deleteDoc(doc(db, TESTIMONIALS_COLLECTION, docSnap.id)));
+            });
+            await Promise.all(deletePromises);
+            
             testimonialsDisplay.style.display = 'none';
             formContainer.style.display = 'block';
             toggleFormBtn.style.display = 'none';
@@ -808,6 +784,9 @@ window.addEventListener('load', function() {
             if (clearAllBtn) clearAllBtn.style.display = 'none';
             
             alert('All testimonials deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting all testimonials:', error);
+            alert('Error deleting testimonials. Please try again.');
         }
     }
     

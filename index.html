@@ -874,7 +874,8 @@
             orderBy: orderBy
         };
         
-        console.log('Firebase initialized');
+        console.log('✅ Firebase initialized successfully');
+        console.log('📦 Firebase methods available:', Object.keys(window.firebaseDB).join(', '));
         
         // Debug: Check if testimonials exist on page load
         (async function() {
