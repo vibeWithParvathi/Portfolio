@@ -482,6 +482,10 @@ window.addEventListener('load', function() {
 (function() {
     const STORAGE_KEY = 'portfolio_testimonials';
     const DELETE_PASSWORD = 'admin123'; // Change this to your desired password
+    const TESTIMONIALS_COLLECTION = 'testimonials';
+    
+    // Check if Firebase is available
+    const useFirebase = typeof window.firebaseDB !== 'undefined' && window.firebaseDB.db;
     
     // Get all elements
     const testimonialForm = document.getElementById('testimonialSubmitForm');
@@ -508,12 +512,12 @@ window.addEventListener('load', function() {
     }
     
     if (toggleDisplayBtn) {
-        toggleDisplayBtn.addEventListener('click', function() {
+        toggleDisplayBtn.addEventListener('click', async function() {
             formContainer.style.display = 'none';
             testimonialsDisplay.style.display = 'block';
             toggleFormBtn.style.display = 'inline-block';
             toggleDisplayBtn.style.display = 'none';
-            loadAndDisplayTestimonials();
+            await loadAndDisplayTestimonials();
             updateClearAllButton();
         });
     }
@@ -542,7 +546,7 @@ window.addEventListener('load', function() {
     
     // Handle form submission
     if (testimonialForm) {
-        testimonialForm.addEventListener('submit', function(e) {
+        testimonialForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const type = testimonialType.value;
@@ -579,7 +583,6 @@ window.addEventListener('load', function() {
             
             // Create testimonial object
             const testimonial = {
-                id: Date.now(),
                 type: type,
                 name: name,
                 company: type === 'colleague' ? company : null,
@@ -592,33 +595,85 @@ window.addEventListener('load', function() {
                 date: new Date().toISOString()
             };
             
-            // Save to localStorage
-            const testimonials = getTestimonials();
-            testimonials.push(testimonial);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
-            
-            // Reset form
-            testimonialForm.reset();
-            companyRow.style.display = 'none';
-            organizationRow.style.display = 'none';
-            
-            // Show success message and display testimonials
-            alert('Thank you for your testimonial! It has been submitted successfully.');
-            
-            // Switch to display view and reload testimonials
-            formContainer.style.display = 'none';
-            testimonialsDisplay.style.display = 'block';
-            toggleFormBtn.style.display = 'inline-block';
-            toggleDisplayBtn.style.display = 'none';
-            loadAndDisplayTestimonials();
-            updateClearAllButton();
+            // Save to Firebase or localStorage
+            if (useFirebase) {
+                try {
+                    const { collection, addDoc, db } = window.firebaseDB;
+                    const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
+                    await addDoc(testimonialsRef, testimonial);
+                    
+                    // Reset form
+                    testimonialForm.reset();
+                    companyRow.style.display = 'none';
+                    organizationRow.style.display = 'none';
+                    
+                    // Show success message and display testimonials
+                    alert('Thank you for your testimonial! It has been submitted successfully and is now visible to all visitors.');
+                    
+                    // Switch to display view and reload testimonials
+                    formContainer.style.display = 'none';
+                    testimonialsDisplay.style.display = 'block';
+                    toggleFormBtn.style.display = 'inline-block';
+                    toggleDisplayBtn.style.display = 'none';
+                    await loadAndDisplayTestimonials();
+                    updateClearAllButton();
+                } catch (error) {
+                    console.error('Error saving to Firebase:', error);
+                    alert('Error saving testimonial. Please try again or contact the site owner.');
+                }
+            } else {
+                // Fallback to localStorage
+                testimonial.id = Date.now();
+                const testimonials = await getTestimonials();
+                testimonials.push(testimonial);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
+                
+                // Reset form
+                testimonialForm.reset();
+                companyRow.style.display = 'none';
+                organizationRow.style.display = 'none';
+                
+                // Show success message and display testimonials
+                alert('Thank you for your testimonial! It has been submitted successfully.');
+                
+                // Switch to display view and reload testimonials
+                formContainer.style.display = 'none';
+                testimonialsDisplay.style.display = 'block';
+                toggleFormBtn.style.display = 'inline-block';
+                toggleDisplayBtn.style.display = 'none';
+                await loadAndDisplayTestimonials();
+                updateClearAllButton();
+            }
         });
     }
     
-    // Get testimonials from localStorage
-    function getTestimonials() {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        return stored ? JSON.parse(stored) : [];
+    // Get testimonials from Firebase or localStorage (fallback)
+    async function getTestimonials() {
+        if (useFirebase) {
+            try {
+                const { collection, getDocs, query, orderBy, db } = window.firebaseDB;
+                const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
+                const q = query(testimonialsRef, orderBy('date', 'desc'));
+                const querySnapshot = await getDocs(q);
+                const testimonials = [];
+                querySnapshot.forEach((docSnap) => {
+                    testimonials.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+                return testimonials;
+            } catch (error) {
+                console.error('Error fetching testimonials from Firebase:', error);
+                // Fallback to localStorage
+                const stored = localStorage.getItem(STORAGE_KEY);
+                return stored ? JSON.parse(stored) : [];
+            }
+        } else {
+            // Fallback to localStorage
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
     }
     
     // Prompt for password
@@ -632,7 +687,7 @@ window.addEventListener('load', function() {
     }
     
     // Delete a single testimonial
-    function deleteTestimonial(id) {
+    async function deleteTestimonial(id) {
         const password = promptPassword('delete this testimonial');
         
         if (password === null) {
@@ -649,27 +704,48 @@ window.addEventListener('load', function() {
             return;
         }
         
-        const testimonials = getTestimonials();
-        const filtered = testimonials.filter(function(t) {
-            return t.id !== id;
-        });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-        loadAndDisplayTestimonials();
-        updateClearAllButton();
-        
-        // If no testimonials left, show form
-        if (filtered.length === 0) {
-            testimonialsDisplay.style.display = 'none';
-            formContainer.style.display = 'block';
-            toggleFormBtn.style.display = 'none';
-            toggleDisplayBtn.style.display = 'none';
+        if (useFirebase) {
+            try {
+                const { deleteDoc, doc, db } = window.firebaseDB;
+                await deleteDoc(doc(db, TESTIMONIALS_COLLECTION, id));
+                await loadAndDisplayTestimonials();
+                updateClearAllButton();
+                
+                const testimonials = await getTestimonials();
+                if (testimonials.length === 0) {
+                    testimonialsDisplay.style.display = 'none';
+                    formContainer.style.display = 'block';
+                    toggleFormBtn.style.display = 'none';
+                    toggleDisplayBtn.style.display = 'none';
+                }
+                
+                alert('Testimonial deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting testimonial:', error);
+                alert('Error deleting testimonial. Please try again.');
+            }
+        } else {
+            const testimonials = await getTestimonials();
+            const filtered = testimonials.filter(function(t) {
+                return t.id !== id;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+            await loadAndDisplayTestimonials();
+            updateClearAllButton();
+            
+            if (filtered.length === 0) {
+                testimonialsDisplay.style.display = 'none';
+                formContainer.style.display = 'block';
+                toggleFormBtn.style.display = 'none';
+                toggleDisplayBtn.style.display = 'none';
+            }
+            
+            alert('Testimonial deleted successfully!');
         }
-        
-        alert('Testimonial deleted successfully!');
     }
     
     // Clear all testimonials
-    function clearAllTestimonials() {
+    async function clearAllTestimonials() {
         const password = promptPassword('delete ALL testimonials');
         
         if (password === null) {
@@ -686,14 +762,38 @@ window.addEventListener('load', function() {
             return;
         }
         
-        localStorage.removeItem(STORAGE_KEY);
-        testimonialsDisplay.style.display = 'none';
-        formContainer.style.display = 'block';
-        toggleFormBtn.style.display = 'none';
-        toggleDisplayBtn.style.display = 'none';
-        if (clearAllBtn) clearAllBtn.style.display = 'none';
-        
-        alert('All testimonials deleted successfully!');
+        if (useFirebase) {
+            try {
+                const { collection, getDocs, deleteDoc, doc, db } = window.firebaseDB;
+                const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
+                const querySnapshot = await getDocs(testimonialsRef);
+                const deletePromises = [];
+                querySnapshot.forEach((docSnap) => {
+                    deletePromises.push(deleteDoc(doc(db, TESTIMONIALS_COLLECTION, docSnap.id)));
+                });
+                await Promise.all(deletePromises);
+                
+                testimonialsDisplay.style.display = 'none';
+                formContainer.style.display = 'block';
+                toggleFormBtn.style.display = 'none';
+                toggleDisplayBtn.style.display = 'none';
+                if (clearAllBtn) clearAllBtn.style.display = 'none';
+                
+                alert('All testimonials deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting all testimonials:', error);
+                alert('Error deleting testimonials. Please try again.');
+            }
+        } else {
+            localStorage.removeItem(STORAGE_KEY);
+            testimonialsDisplay.style.display = 'none';
+            formContainer.style.display = 'block';
+            toggleFormBtn.style.display = 'none';
+            toggleDisplayBtn.style.display = 'none';
+            if (clearAllBtn) clearAllBtn.style.display = 'none';
+            
+            alert('All testimonials deleted successfully!');
+        }
     }
     
     // Clear all button event listener
@@ -716,8 +816,8 @@ window.addEventListener('load', function() {
     }
     
     // Load and display testimonials
-    function loadAndDisplayTestimonials() {
-        const testimonials = getTestimonials();
+    async function loadAndDisplayTestimonials() {
+        const testimonials = await getTestimonials();
         
         if (!testimonialsTrack) return;
         
@@ -871,8 +971,8 @@ window.addEventListener('load', function() {
     }
     
     // Update clear all button visibility
-    function updateClearAllButton() {
-        const testimonials = getTestimonials();
+    async function updateClearAllButton() {
+        const testimonials = await getTestimonials();
         if (clearAllBtn) {
             if (testimonials.length > 0 && testimonialsDisplay.style.display === 'block') {
                 clearAllBtn.style.display = 'inline-block';
@@ -901,22 +1001,19 @@ window.addEventListener('load', function() {
         }
     });
     
-    // Also load testimonials after form submission
-    if (testimonialForm) {
-        const originalSubmit = testimonialForm.onsubmit;
-        testimonialForm.addEventListener('submit', function(e) {
-            // Let the form submission handler run first
-            setTimeout(function() {
-                const testimonials = getTestimonials();
-                if (testimonials.length > 0) {
-                    testimonialsDisplay.style.display = 'block';
-                    formContainer.style.display = 'none';
-                    toggleFormBtn.style.display = 'inline-block';
-                    toggleDisplayBtn.style.display = 'none';
-                    loadAndDisplayTestimonials();
-                }
-            }, 100);
-        });
-    }
+    // Initial load of testimonials on page load
+    (async function() {
+        // Wait a bit for Firebase to initialize
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const testimonials = await getTestimonials();
+        if (testimonials.length > 0) {
+            testimonialsDisplay.style.display = 'block';
+            formContainer.style.display = 'none';
+            toggleFormBtn.style.display = 'inline-block';
+            toggleDisplayBtn.style.display = 'none';
+            await loadAndDisplayTestimonials();
+            await updateClearAllButton();
+        }
+    })();
 })();
 

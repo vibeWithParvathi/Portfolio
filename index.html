@@ -251,7 +251,7 @@
 
         <section id="work" class="work-section">
             <div class="wrapper">
-                <h2 class="section-heading">My Work</h2>
+                <h2 class="section-heading">My Works</h2>
                 <div class="work-grid">
                     <div class="work-card">
                         <div class="work-image-area">
@@ -339,8 +339,8 @@
                                 <label for="testimonialType">Type *</label>
                                 <select id="testimonialType" class="form-select" required>
                                     <option value="">Select Type</option>
-                                    <option value="colleague">Colleague/Senior/Manager/HR</option>
-                                    <option value="mentor">Mentor/Teacher</option>
+                                    <option value="colleague">Colleague/Senior/Manager/HR/Others</option>
+                                    <option value="mentor">Mentor/Teacher/Others</option>
                                 </select>
                             </div>
                         </div>
@@ -842,6 +842,40 @@
     </footer>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Firebase SDK v9+ (modular) -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Firebase configuration from Firebase Console
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwIXWWWHFMndV6Ea7ypo48vkNxAw538sU",
+            authDomain: "portfolio-testimonials-c493c.firebaseapp.com",
+            projectId: "portfolio-testimonials-c493c",
+            storageBucket: "portfolio-testimonials-c493c.firebasestorage.app",
+            messagingSenderId: "648843279962",
+            appId: "1:648843279962:web:97598189db86df9e744a63",
+            measurementId: "G-LOKPXFK2MM"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Make Firebase available globally
+        window.firebaseDB = {
+            db: db,
+            collection: collection,
+            addDoc: addDoc,
+            getDocs: getDocs,
+            deleteDoc: deleteDoc,
+            doc: doc,
+            query: query,
+            orderBy: orderBy
+        };
+        
+        console.log('Firebase initialized');
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
