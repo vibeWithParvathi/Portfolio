@@ -484,8 +484,10 @@ window.addEventListener('load', function() {
     const DELETE_PASSWORD = 'admin123'; // Change this to your desired password
     const TESTIMONIALS_COLLECTION = 'testimonials';
     
-    // Check if Firebase is available
-    const useFirebase = typeof window.firebaseDB !== 'undefined' && window.firebaseDB.db;
+    // Check if Firebase is available (function to check dynamically)
+    function useFirebase() {
+        return typeof window.firebaseDB !== 'undefined' && window.firebaseDB && window.firebaseDB.db;
+    }
     
     // Get all elements
     const testimonialForm = document.getElementById('testimonialSubmitForm');
@@ -596,7 +598,7 @@ window.addEventListener('load', function() {
             };
             
             // Save to Firebase or localStorage
-            if (useFirebase) {
+            if (useFirebase()) {
                 try {
                     console.log('💾 Attempting to save testimonial to Firebase...');
                     console.log('📝 Testimonial data:', testimonial);
@@ -659,7 +661,7 @@ window.addEventListener('load', function() {
     
     // Get testimonials from Firebase or localStorage (fallback)
     async function getTestimonials() {
-        if (useFirebase) {
+        if (useFirebase()) {
             try {
                 const { collection, getDocs, query, orderBy, db } = window.firebaseDB;
                 const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
@@ -717,7 +719,7 @@ window.addEventListener('load', function() {
             return;
         }
         
-        if (useFirebase) {
+        if (useFirebase()) {
             try {
                 const { deleteDoc, doc, db } = window.firebaseDB;
                 await deleteDoc(doc(db, TESTIMONIALS_COLLECTION, id));
@@ -775,7 +777,7 @@ window.addEventListener('load', function() {
             return;
         }
         
-        if (useFirebase) {
+        if (useFirebase()) {
             try {
                 const { collection, getDocs, deleteDoc, doc, db } = window.firebaseDB;
                 const testimonialsRef = collection(db, TESTIMONIALS_COLLECTION);
