@@ -500,7 +500,6 @@ window.addEventListener('load', function() {
     const testimonialsTrack = document.getElementById('testimonialsTrack');
     const toggleFormBtn = document.getElementById('toggleFormBtn');
     const toggleDisplayBtn = document.getElementById('toggleDisplayBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
     
     // Toggle form/display visibility
     if (toggleFormBtn) {
@@ -519,7 +518,6 @@ window.addEventListener('load', function() {
             toggleFormBtn.style.display = 'inline-block';
             toggleDisplayBtn.style.display = 'none';
             await loadAndDisplayTestimonials();
-            updateClearAllButton();
         });
     }
     
@@ -632,7 +630,6 @@ window.addEventListener('load', function() {
                 toggleFormBtn.style.display = 'inline-block';
                 toggleDisplayBtn.style.display = 'none';
                 await loadAndDisplayTestimonials();
-                await updateClearAllButton();
             } catch (error) {
                 console.error('❌ Error saving to Firebase:', error);
                 console.error('Error details:', error.message);
@@ -743,7 +740,6 @@ window.addEventListener('load', function() {
             console.log('✅ Testimonial marked as deleted in Firebase (hidden from frontend)');
             
             await loadAndDisplayTestimonials();
-            updateClearAllButton();
             
             const testimonials = await getTestimonials();
             if (testimonials.length === 0) {
@@ -813,7 +809,6 @@ window.addEventListener('load', function() {
             formContainer.style.display = 'block';
             toggleFormBtn.style.display = 'none';
             toggleDisplayBtn.style.display = 'none';
-            if (clearAllBtn) clearAllBtn.style.display = 'none';
             
             alert(`All testimonials removed from display! (${updatePromises.length} testimonial(s) remain in Firebase database)`);
         } catch (error) {
@@ -822,10 +817,6 @@ window.addEventListener('load', function() {
         }
     }
     
-    // Clear all button event listener
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', clearAllTestimonials);
-    }
     
     // Display star rating
     function displayStars(rating) {
@@ -868,9 +859,6 @@ window.addEventListener('load', function() {
             
             card.innerHTML = `
                 <div class="testimonial-content">
-                    <button class="delete-testimonial-btn" data-id="${testimonial.id}" title="Delete this testimonial">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
                     <div class="testimonial-author">
                         <div class="author-info">
                             <h4 class="author-name">${testimonial.name}</h4>
@@ -886,21 +874,6 @@ window.addEventListener('load', function() {
             `;
             
             testimonialsTrack.appendChild(card);
-        });
-        
-        // Add delete button event listeners
-        const deleteButtons = testimonialsTrack.querySelectorAll('.delete-testimonial-btn');
-        deleteButtons.forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const testimonialId = this.getAttribute('data-id');
-                if (testimonialId) {
-                    deleteTestimonial(testimonialId);
-                } else {
-                    console.error('❌ Testimonial ID not found');
-                    alert('Error: Testimonial ID not found. Please refresh the page and try again.');
-                }
-            });
         });
         
         // Initialize slider after loading testimonials
@@ -1001,18 +974,6 @@ window.addEventListener('load', function() {
         startAutoSlide();
     }
     
-    // Update clear all button visibility
-    async function updateClearAllButton() {
-        const testimonials = await getTestimonials();
-        if (clearAllBtn) {
-            if (testimonials.length > 0 && testimonialsDisplay.style.display === 'block') {
-                clearAllBtn.style.display = 'inline-block';
-            } else {
-                clearAllBtn.style.display = 'none';
-            }
-        }
-    }
-    
     // Load testimonials on page load
     window.addEventListener('DOMContentLoaded', async function() {
         // Wait for Firebase to initialize (if using Firebase)
@@ -1025,13 +986,11 @@ window.addEventListener('load', function() {
             toggleFormBtn.style.display = 'inline-block';
             toggleDisplayBtn.style.display = 'none';
             await loadAndDisplayTestimonials();
-            await updateClearAllButton();
         } else {
             testimonialsDisplay.style.display = 'none';
             formContainer.style.display = 'block';
             toggleFormBtn.style.display = 'none';
             toggleDisplayBtn.style.display = 'none';
-            if (clearAllBtn) clearAllBtn.style.display = 'none';
         }
     });
 })();
