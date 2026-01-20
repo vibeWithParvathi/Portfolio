@@ -19,7 +19,11 @@
                     <li class="nav-item"><a href="#bio" class="nav-anchor">About</a></li>
                     <li class="nav-item"><a href="#expertise" class="nav-anchor">Skills</a></li>
                     <li class="nav-item"><a href="#work" class="nav-anchor">Projects</a></li>
+                    <li class="nav-item"><a href="#achievements" class="nav-anchor">Achievements</a></li>
+                    <li class="nav-item"><a href="#resume" class="nav-anchor">Resume</a></li>
+                    <li class="nav-item"><a href="#testimonials" class="nav-anchor">Testimonials</a></li>
                     <li class="nav-item"><a href="#reach-out" class="nav-anchor">Contact</a></li>
+                    <li class="nav-item"><a href="#blog" class="nav-anchor">Blog</a></li>
                 </ul>
             </nav>
             <button class="menu-toggle" aria-label="Toggle menu">
@@ -109,6 +113,12 @@
         </section>
 
         <section id="expertise" class="expertise-section">
+            <div class="expertise-animated-bg">
+                <div class="expertise-circuit circuit-path-1"></div>
+                <div class="expertise-circuit circuit-path-2"></div>
+                <div class="expertise-circuit circuit-path-3"></div>
+                <div class="expertise-circuit circuit-path-4"></div>
+            </div>
             <div class="wrapper">
                 <h2 class="section-heading">What I Know</h2>
                 <div class="slider-wrapper">
@@ -247,7 +257,7 @@
                         <div class="work-image-area">
                             <img src="images/getquote.png" alt="Request Quote App" class="work-image">
                             <div class="work-overlay">
-                                <a href="https://github.com/vibeWithParvathi/Remix-App-RequestQuote" target="_blank" class="work-action-btn" aria-label="View source code">
+                                <a href="https://github.com/parvathis-12/Remix-App-RequestQuote" target="_blank" class="work-action-btn" aria-label="View source code">
                                     <i class="fab fa-github"></i>
                                 </a>
                             </div>
@@ -316,6 +326,207 @@
             </div>
         </section>
 
+        <section id="testimonials" class="testimonials-section">
+            <div class="wrapper">
+                <h2 class="section-heading">Testimonials</h2>
+                
+                <!-- Testimonial Submission Form -->
+                <div class="testimonial-form-container" id="testimonialFormContainer" style="display: none;">
+                    <h3 class="form-title">Share Your Feedback</h3>
+                    <form class="testimonial-submit-form" id="testimonialSubmitForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialType">Type *</label>
+                                <select id="testimonialType" class="form-select" required>
+                                    <option value="">Select Type</option>
+                                    <option value="colleague">Colleague/Senior/Manager/HR</option>
+                                    <option value="mentor">Mentor/Teacher</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialName">Name *</label>
+                                <input type="text" id="testimonialName" class="form-input" placeholder="Your Full Name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" id="companyRow">
+                            <div class="form-group">
+                                <label for="testimonialCompany">Company Name *</label>
+                                <input type="text" id="testimonialCompany" class="form-input" placeholder="Company Name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" id="organizationRow" style="display: none;">
+                            <div class="form-group">
+                                <label for="testimonialOrganization">Organization *</label>
+                                <input type="text" id="testimonialOrganization" class="form-input" placeholder="Organization Name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialDesignation">Designation *</label>
+                                <input type="text" id="testimonialDesignation" class="form-input" placeholder="Your Designation" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialEmail">Email ID *</label>
+                                <input type="email" id="testimonialEmail" class="form-input" placeholder="your.email@example.com" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialContact">Contact Number</label>
+                                <input type="tel" id="testimonialContact" class="form-input" placeholder="+91 1234567890">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialExperience">Your Experience About Me *</label>
+                                <textarea id="testimonialExperience" class="form-textarea" placeholder="Share your experience working with Parvathi..." rows="4" required></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testimonialRating">Rating *</label>
+                                <div class="star-rating-input">
+                                    <input type="radio" id="star5" name="rating" value="5" required>
+                                    <label for="star5" class="star-label"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star4" name="rating" value="4">
+                                    <label for="star4" class="star-label"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star3" name="rating" value="3">
+                                    <label for="star3" class="star-label"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star2" name="rating" value="2">
+                                    <label for="star2" class="star-label"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star1" name="rating" value="1">
+                                    <label for="star1" class="star-label"><i class="fas fa-star"></i></label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-testimonial-btn">Submit Testimonial</button>
+                    </form>
+                </div>
+                
+                <!-- Display Testimonials -->
+                <div class="testimonials-display" id="testimonialsDisplay">
+                    <div class="testimonials-slider">
+                        <button class="testimonial-btn prev-testimonial" aria-label="Previous">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="testimonials-container">
+                            <div class="testimonials-track" id="testimonialsTrack">
+                                <!-- Testimonials will be dynamically inserted here -->
+                            </div>
+                        </div>
+                        <button class="testimonial-btn next-testimonial" aria-label="Next">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="testimonial-dots" id="testimonialDots"></div>
+                </div>
+                
+                <!-- Toggle Button -->
+                <div class="testimonial-toggle">
+                    <button class="toggle-form-btn" id="toggleFormBtn">Add Testimonial</button>
+                    <button class="toggle-display-btn" id="toggleDisplayBtn" style="display: none;">View Testimonials</button>
+                    <button class="clear-all-btn" id="clearAllBtn" style="display: none;">Clear All Testimonials</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="resume" class="resume-section">
+            <div class="resume-animated-bg">
+                <div class="code-snippet code-1">&lt;div&gt;Resume&lt;/div&gt;</div>
+                <div class="code-snippet code-2">function download() { }</div>
+                <div class="code-snippet code-3">const skills = [];</div>
+                <div class="code-snippet code-4">@media query { }</div>
+                <div class="code-snippet code-5">SELECT * FROM experience;</div>
+                <div class="binary-number binary-1">101010</div>
+                <div class="binary-number binary-2">110011</div>
+                <div class="binary-number binary-3">100101</div>
+                <div class="binary-number binary-4">111000</div>
+                <div class="tech-icon tech-1"><i class="fab fa-html5"></i></div>
+                <div class="tech-icon tech-2"><i class="fab fa-css3-alt"></i></div>
+                <div class="tech-icon tech-3"><i class="fab fa-js-square"></i></div>
+                <div class="tech-icon tech-4"><i class="fab fa-java"></i></div>
+                <div class="tech-icon tech-5"><i class="fab fa-react"></i></div>
+                <div class="tech-icon tech-6"><i class="fab fa-php"></i></div>
+                <div class="circuit-line circuit-1"></div>
+                <div class="circuit-line circuit-2"></div>
+                <div class="circuit-line circuit-3"></div>
+                <div class="data-flow data-1"></div>
+                <div class="data-flow data-2"></div>
+                <div class="data-flow data-3"></div>
+            </div>
+            <div class="wrapper">
+                <h2 class="section-heading">My Resume</h2>
+                <p class="resume-intro">
+                    Explore my professional journey, skills, and accomplishments. Download my resume to learn more about my experience, 
+                    technical expertise, and how I can contribute to your team. I'm always open to new opportunities and exciting projects.
+                </p>
+                <div class="resume-container">
+                    <div class="resume-card">
+                        <div class="resume-icon-wrapper">
+                            <i class="fas fa-file-pdf resume-icon"></i>
+                        </div>
+                        <h3 class="resume-title">Professional Resume</h3>
+                        <p class="resume-description">Get a comprehensive overview of my skills, experience, and achievements in a well-structured PDF format.</p>
+                        <a href="documents/Resume.pdf" class="resume-download-btn" download>
+                            <i class="fas fa-download"></i>
+                            <span>Download Resume</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements" class="achievements-section">
+            <div class="wrapper">
+                <h2 class="section-heading">Achievements</h2>
+                <div class="achievements-list">
+                    <div class="achievement-item" data-certificate="images/Jspiders.png" data-type="image">
+                        <i class="fas fa-trophy achievement-icon"></i>
+                        <span class="achievement-name">Java Full Stack Development - Professional Training Certificate</span>
+                        <i class="fas fa-external-link-alt achievement-link-icon"></i>
+                    </div>
+                    <div class="achievement-item" data-certificate="documents/patent.pdf" data-type="pdf">
+                        <i class="fas fa-trophy achievement-icon"></i>
+                        <span class="achievement-name">Patent Certificate - Innovation Recognition</span>
+                        <i class="fas fa-file-pdf achievement-link-icon pdf-icon"></i>
+                    </div>
+                    <div class="achievement-item" data-certificate="documents/project.pdf" data-type="pdf">
+                        <i class="fas fa-trophy achievement-icon"></i>
+                        <span class="achievement-name">Best Project Award & Research Paper Publication Certificate</span>
+                        <i class="fas fa-file-pdf achievement-link-icon pdf-icon"></i>
+                    </div>
+                    <div class="achievement-item" data-certificate="images/RPA.jpeg" data-type="image">
+                        <i class="fas fa-trophy achievement-icon"></i>
+                        <span class="achievement-name">Robotic Process Automation (RPA) - Certificate Course by ICTAK & CTS</span>
+                        <i class="fas fa-external-link-alt achievement-link-icon"></i>
+                    </div>
+                    <div class="achievement-item" data-certificate="documents/Coincent_Certificate.pdf" data-type="pdf">
+                        <i class="fas fa-trophy achievement-icon"></i>
+                        <span class="achievement-name">Artificial Intelligence with Python - Certificate by Coincent & Edge Neural AI</span>
+                        <i class="fas fa-file-pdf achievement-link-icon pdf-icon"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Certificate Modal -->
+            <div class="certificate-modal" id="certificateModal">
+                <span class="certificate-close">&times;</span>
+                <img class="certificate-content" id="certificateImage">
+            </div>
+        </section>
+
         <section id="reach-out" class="contact-section">
             <div class="wrapper">
                 <h2 class="section-heading">Let's Connect</h2>
@@ -364,6 +575,261 @@
                         </div>
                         <button type="submit" class="submit-button">Send me a Message</button>
                     </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="blog" class="blog-section">
+            <div class="wrapper">
+                <h2 class="section-heading">Blog</h2>
+                <div class="blog-slider-container">
+                    <div class="blog-row blog-row-1">
+                        <div class="blog-slider-track">
+                            <div class="blog-item" data-image="images/blog1.jpeg">
+                                <img src="images/blog1.jpeg" alt="Blog Image 1" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog2.jpeg">
+                                <img src="images/blog2.jpeg" alt="Blog Image 2" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog3.jpeg">
+                                <img src="images/blog3.jpeg" alt="Blog Image 3" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog4.jpeg">
+                                <img src="images/blog4.jpeg" alt="Blog Image 4" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog5.jpeg">
+                                <img src="images/blog5.jpeg" alt="Blog Image 5" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog6.jpeg">
+                                <img src="images/blog6.jpeg" alt="Blog Image 6" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog7.jpeg">
+                                <img src="images/blog7.jpeg" alt="Blog Image 7" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog8.jpeg">
+                                <img src="images/blog8.jpeg" alt="Blog Image 8" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <!-- Duplicate for seamless loop -->
+                            <div class="blog-item" data-image="images/blog1.jpeg">
+                                <img src="images/blog1.jpeg" alt="Blog Image 1" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog2.jpeg">
+                                <img src="images/blog2.jpeg" alt="Blog Image 2" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog3.jpeg">
+                                <img src="images/blog3.jpeg" alt="Blog Image 3" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog4.jpeg">
+                                <img src="images/blog4.jpeg" alt="Blog Image 4" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog5.jpeg">
+                                <img src="images/blog5.jpeg" alt="Blog Image 5" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog6.jpeg">
+                                <img src="images/blog6.jpeg" alt="Blog Image 6" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog7.jpeg">
+                                <img src="images/blog7.jpeg" alt="Blog Image 7" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog8.jpeg">
+                                <img src="images/blog8.jpeg" alt="Blog Image 8" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blog-row blog-row-2">
+                        <div class="blog-slider-track blog-slider-track-reverse">
+                            <div class="blog-item" data-image="images/blog9.jpeg">
+                                <img src="images/blog9.jpeg" alt="Blog Image 9" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog10.jpeg">
+                                <img src="images/blog10.jpeg" alt="Blog Image 10" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog11.jpeg">
+                                <img src="images/blog11.jpeg" alt="Blog Image 11" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog12.jpeg">
+                                <img src="images/blog12.jpeg" alt="Blog Image 12" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog13.jpeg">
+                                <img src="images/blog13.jpeg" alt="Blog Image 13" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog14.jpeg">
+                                <img src="images/blog14.jpeg" alt="Blog Image 14" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog15.jpeg">
+                                <img src="images/blog15.jpeg" alt="Blog Image 15" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog16.jpeg">
+                                <img src="images/blog16.jpeg" alt="Blog Image 16" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog17.jpeg">
+                                <img src="images/blog17.jpeg" alt="Blog Image 17" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog18.jpeg">
+                                <img src="images/blog18.jpeg" alt="Blog Image 18" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog19.jpeg">
+                                <img src="images/blog19.jpeg" alt="Blog Image 19" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <!-- Duplicate for seamless loop -->
+                            <div class="blog-item" data-image="images/blog9.jpeg">
+                                <img src="images/blog9.jpeg" alt="Blog Image 9" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog10.jpeg">
+                                <img src="images/blog10.jpeg" alt="Blog Image 10" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog11.jpeg">
+                                <img src="images/blog11.jpeg" alt="Blog Image 11" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog12.jpeg">
+                                <img src="images/blog12.jpeg" alt="Blog Image 12" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog13.jpeg">
+                                <img src="images/blog13.jpeg" alt="Blog Image 13" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog14.jpeg">
+                                <img src="images/blog14.jpeg" alt="Blog Image 14" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog15.jpeg">
+                                <img src="images/blog15.jpeg" alt="Blog Image 15" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog16.jpeg">
+                                <img src="images/blog16.jpeg" alt="Blog Image 16" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog17.jpeg">
+                                <img src="images/blog17.jpeg" alt="Blog Image 17" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog18.jpeg">
+                                <img src="images/blog18.jpeg" alt="Blog Image 18" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="blog-item" data-image="images/blog19.jpeg">
+                                <img src="images/blog19.jpeg" alt="Blog Image 19" class="blog-image">
+                                <div class="blog-overlay">
+                                    <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Lightbox Modal -->
+            <div class="lightbox-modal" id="lightboxModal">
+                <span class="lightbox-close">&times;</span>
+                <img class="lightbox-content" id="lightboxImage">
+                <div class="lightbox-nav">
+                    <button class="lightbox-prev">&#10094;</button>
+                    <button class="lightbox-next">&#10095;</button>
                 </div>
             </div>
         </section>

@@ -341,3 +341,582 @@ window.addEventListener('load', function() {
     startAutoSlide();
 })();
 
+// Blog Lightbox Functionality
+(function() {
+    const blogItems = document.querySelectorAll('.blog-item');
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    const lightboxPrev = document.querySelector('.lightbox-prev');
+    const lightboxNext = document.querySelector('.lightbox-next');
+    
+    // Get unique images (remove duplicates)
+    const imageMap = new Map();
+    const images = [];
+    blogItems.forEach(function(item) {
+        const imagePath = item.getAttribute('data-image');
+        if (!imageMap.has(imagePath)) {
+            imageMap.set(imagePath, images.length);
+            images.push(imagePath);
+        }
+    });
+    
+    let currentImageIndex = 0;
+    
+    function openLightbox(index) {
+        currentImageIndex = index;
+        lightboxImage.src = images[currentImageIndex];
+        lightboxModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLightbox() {
+        lightboxModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    function showNextImage() {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        lightboxImage.src = images[currentImageIndex];
+    }
+    
+    function showPrevImage() {
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        lightboxImage.src = images[currentImageIndex];
+    }
+    
+    blogItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+            const imagePath = item.getAttribute('data-image');
+            const index = imageMap.get(imagePath);
+            openLightbox(index);
+        });
+    });
+    
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+    
+    if (lightboxNext) {
+        lightboxNext.addEventListener('click', showNextImage);
+    }
+    
+    if (lightboxPrev) {
+        lightboxPrev.addEventListener('click', showPrevImage);
+    }
+    
+    if (lightboxModal) {
+        lightboxModal.addEventListener('click', function(e) {
+            if (e.target === lightboxModal) {
+                closeLightbox();
+            }
+        });
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (lightboxModal && lightboxModal.style.display === 'block') {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowRight') {
+                showNextImage();
+            } else if (e.key === 'ArrowLeft') {
+                showPrevImage();
+            }
+        }
+    });
+})();
+
+// Achievements Certificate Modal (Supports both PDF and Images)
+(function() {
+    const achievementItems = document.querySelectorAll('.achievement-item');
+    const certificateModal = document.getElementById('certificateModal');
+    const certificateImage = document.getElementById('certificateImage');
+    const certificateClose = document.querySelector('.certificate-close');
+    
+    achievementItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+            const certificatePath = item.getAttribute('data-certificate');
+            const fileType = item.getAttribute('data-type') || 'image';
+            
+            if (certificatePath) {
+                if (fileType === 'pdf') {
+                    // Open PDF in new tab
+                    window.open(certificatePath, '_blank');
+                } else {
+                    // Show image in modal
+                    certificateImage.src = certificatePath;
+                    certificateModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+        });
+    });
+    
+    if (certificateClose) {
+        certificateClose.addEventListener('click', function() {
+            certificateModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    }
+    
+    if (certificateModal) {
+        certificateModal.addEventListener('click', function(e) {
+            if (e.target === certificateModal) {
+                certificateModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (certificateModal && certificateModal.style.display === 'block' && e.key === 'Escape') {
+            certificateModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+})();
+
+// Testimonials System - Form Submission and Display
+(function() {
+    const STORAGE_KEY = 'portfolio_testimonials';
+    const DELETE_PASSWORD = 'admin123'; // Change this to your desired password
+    
+    // Get all elements
+    const testimonialForm = document.getElementById('testimonialSubmitForm');
+    const testimonialType = document.getElementById('testimonialType');
+    const companyRow = document.getElementById('companyRow');
+    const organizationRow = document.getElementById('organizationRow');
+    const testimonialCompany = document.getElementById('testimonialCompany');
+    const testimonialOrganization = document.getElementById('testimonialOrganization');
+    const formContainer = document.getElementById('testimonialFormContainer');
+    const testimonialsDisplay = document.getElementById('testimonialsDisplay');
+    const testimonialsTrack = document.getElementById('testimonialsTrack');
+    const toggleFormBtn = document.getElementById('toggleFormBtn');
+    const toggleDisplayBtn = document.getElementById('toggleDisplayBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    
+    // Toggle form/display visibility
+    if (toggleFormBtn) {
+        toggleFormBtn.addEventListener('click', function() {
+            formContainer.style.display = 'block';
+            testimonialsDisplay.style.display = 'none';
+            toggleFormBtn.style.display = 'none';
+            toggleDisplayBtn.style.display = 'inline-block';
+        });
+    }
+    
+    if (toggleDisplayBtn) {
+        toggleDisplayBtn.addEventListener('click', function() {
+            formContainer.style.display = 'none';
+            testimonialsDisplay.style.display = 'block';
+            toggleFormBtn.style.display = 'inline-block';
+            toggleDisplayBtn.style.display = 'none';
+            loadAndDisplayTestimonials();
+            updateClearAllButton();
+        });
+    }
+    
+    // Show/hide company or organization field based on type
+    if (testimonialType) {
+        testimonialType.addEventListener('change', function() {
+            if (this.value === 'colleague') {
+                companyRow.style.display = 'flex';
+                organizationRow.style.display = 'none';
+                testimonialCompany.required = true;
+                testimonialOrganization.required = false;
+            } else if (this.value === 'mentor') {
+                companyRow.style.display = 'none';
+                organizationRow.style.display = 'flex';
+                testimonialCompany.required = false;
+                testimonialOrganization.required = true;
+            } else {
+                companyRow.style.display = 'none';
+                organizationRow.style.display = 'none';
+                testimonialCompany.required = false;
+                testimonialOrganization.required = false;
+            }
+        });
+    }
+    
+    // Handle form submission
+    if (testimonialForm) {
+        testimonialForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const type = testimonialType.value;
+            const name = document.getElementById('testimonialName').value.trim();
+            const company = testimonialCompany.value.trim();
+            const organization = testimonialOrganization.value.trim();
+            const designation = document.getElementById('testimonialDesignation').value.trim();
+            const email = document.getElementById('testimonialEmail').value.trim();
+            const contact = document.getElementById('testimonialContact').value.trim();
+            const experience = document.getElementById('testimonialExperience').value.trim();
+            const rating = document.querySelector('input[name="rating"]:checked')?.value;
+            
+            if (!type || !name || !designation || !email || !experience || !rating) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            if (type === 'colleague' && !company) {
+                alert('Please enter company name.');
+                return;
+            }
+            
+            if (type === 'mentor' && !organization) {
+                alert('Please enter organization name.');
+                return;
+            }
+            
+            // Create testimonial object
+            const testimonial = {
+                id: Date.now(),
+                type: type,
+                name: name,
+                company: type === 'colleague' ? company : null,
+                organization: type === 'mentor' ? organization : null,
+                designation: designation,
+                email: email,
+                contact: contact || null,
+                experience: experience,
+                rating: parseInt(rating),
+                date: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            const testimonials = getTestimonials();
+            testimonials.push(testimonial);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
+            
+            // Reset form
+            testimonialForm.reset();
+            companyRow.style.display = 'none';
+            organizationRow.style.display = 'none';
+            
+            // Show success message and display testimonials
+            alert('Thank you for your testimonial! It has been submitted successfully.');
+            
+            // Switch to display view and reload testimonials
+            formContainer.style.display = 'none';
+            testimonialsDisplay.style.display = 'block';
+            toggleFormBtn.style.display = 'inline-block';
+            toggleDisplayBtn.style.display = 'none';
+            loadAndDisplayTestimonials();
+            updateClearAllButton();
+        });
+    }
+    
+    // Get testimonials from localStorage
+    function getTestimonials() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
+    }
+    
+    // Prompt for password
+    function promptPassword(action) {
+        return prompt(`Please enter the password to ${action}:`);
+    }
+    
+    // Verify password
+    function verifyPassword(inputPassword) {
+        return inputPassword === DELETE_PASSWORD;
+    }
+    
+    // Delete a single testimonial
+    function deleteTestimonial(id) {
+        const password = promptPassword('delete this testimonial');
+        
+        if (password === null) {
+            // User cancelled
+            return;
+        }
+        
+        if (!verifyPassword(password)) {
+            alert('Incorrect password! Deletion cancelled.');
+            return;
+        }
+        
+        if (!confirm('Are you sure you want to delete this testimonial?')) {
+            return;
+        }
+        
+        const testimonials = getTestimonials();
+        const filtered = testimonials.filter(function(t) {
+            return t.id !== id;
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+        loadAndDisplayTestimonials();
+        updateClearAllButton();
+        
+        // If no testimonials left, show form
+        if (filtered.length === 0) {
+            testimonialsDisplay.style.display = 'none';
+            formContainer.style.display = 'block';
+            toggleFormBtn.style.display = 'none';
+            toggleDisplayBtn.style.display = 'none';
+        }
+        
+        alert('Testimonial deleted successfully!');
+    }
+    
+    // Clear all testimonials
+    function clearAllTestimonials() {
+        const password = promptPassword('delete ALL testimonials');
+        
+        if (password === null) {
+            // User cancelled
+            return;
+        }
+        
+        if (!verifyPassword(password)) {
+            alert('Incorrect password! Deletion cancelled.');
+            return;
+        }
+        
+        if (!confirm('Are you sure you want to delete ALL testimonials? This action cannot be undone.')) {
+            return;
+        }
+        
+        localStorage.removeItem(STORAGE_KEY);
+        testimonialsDisplay.style.display = 'none';
+        formContainer.style.display = 'block';
+        toggleFormBtn.style.display = 'none';
+        toggleDisplayBtn.style.display = 'none';
+        if (clearAllBtn) clearAllBtn.style.display = 'none';
+        
+        alert('All testimonials deleted successfully!');
+    }
+    
+    // Clear all button event listener
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', clearAllTestimonials);
+    }
+    
+    // Display star rating
+    function displayStars(rating) {
+        let starsHtml = '<div class="star-rating-display">';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHtml += '<i class="fas fa-star star"></i>';
+            } else {
+                starsHtml += '<i class="far fa-star star empty"></i>';
+            }
+        }
+        starsHtml += '</div>';
+        return starsHtml;
+    }
+    
+    // Load and display testimonials
+    function loadAndDisplayTestimonials() {
+        const testimonials = getTestimonials();
+        
+        if (!testimonialsTrack) return;
+        
+        testimonialsTrack.innerHTML = '';
+        
+        if (testimonials.length === 0) {
+            testimonialsTrack.innerHTML = '<div class="testimonial-card"><div class="testimonial-content"><p>No testimonials yet. Be the first to share your feedback!</p></div></div>';
+            return;
+        }
+        
+        testimonials.forEach(function(testimonial) {
+            const card = document.createElement('div');
+            card.className = 'testimonial-card';
+            
+            const companyOrOrg = testimonial.type === 'colleague' 
+                ? testimonial.company 
+                : testimonial.organization;
+            
+            const contactInfo = testimonial.contact 
+                ? `<p class="author-contact"><i class="fas fa-phone"></i> ${testimonial.contact}</p>` 
+                : '';
+            
+            card.innerHTML = `
+                <div class="testimonial-content">
+                    <button class="delete-testimonial-btn" data-id="${testimonial.id}" title="Delete this testimonial">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4 class="author-name">${testimonial.name}</h4>
+                            <p class="author-role">${testimonial.designation}</p>
+                            <p class="author-company">${companyOrOrg}</p>
+                            <p class="author-email"><i class="fas fa-envelope"></i> ${testimonial.email}</p>
+                            ${contactInfo}
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"${testimonial.experience}"</p>
+                    ${displayStars(testimonial.rating)}
+                </div>
+            `;
+            
+            testimonialsTrack.appendChild(card);
+        });
+        
+        // Add delete button event listeners
+        const deleteButtons = testimonialsTrack.querySelectorAll('.delete-testimonial-btn');
+        deleteButtons.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const testimonialId = parseInt(this.getAttribute('data-id'));
+                deleteTestimonial(testimonialId);
+            });
+        });
+        
+        // Initialize slider after loading testimonials
+        initializeTestimonialSlider();
+    }
+    
+    // Initialize testimonial slider
+    function initializeTestimonialSlider() {
+        const track = document.getElementById('testimonialsTrack');
+        const prevBtn = document.querySelector('.prev-testimonial');
+        const nextBtn = document.querySelector('.next-testimonial');
+        const dotsContainer = document.getElementById('testimonialDots');
+        const testimonialCards = track.querySelectorAll('.testimonial-card');
+        
+        if (!track || !testimonialCards.length) return;
+        
+        let currentTestimonial = 0;
+        const totalTestimonials = testimonialCards.length;
+        
+        function createDots() {
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalTestimonials; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('testimonial-dot');
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', function() {
+                    currentTestimonial = i;
+                    updateSlider();
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+        
+        function updateSlider() {
+            const translateX = -(currentTestimonial * 100);
+            track.style.transform = `translateX(${translateX}%)`;
+            
+            const dots = dotsContainer.querySelectorAll('.testimonial-dot');
+            dots.forEach(function(dot, index) {
+                dot.classList.toggle('active', index === currentTestimonial);
+            });
+            
+            if (prevBtn) {
+                prevBtn.style.opacity = currentTestimonial === 0 ? '0.5' : '1';
+                prevBtn.disabled = currentTestimonial === 0;
+            }
+            
+            if (nextBtn) {
+                nextBtn.style.opacity = currentTestimonial >= totalTestimonials - 1 ? '0.5' : '1';
+                nextBtn.disabled = currentTestimonial >= totalTestimonials - 1;
+            }
+        }
+        
+        if (nextBtn) {
+            nextBtn.onclick = function() {
+                if (currentTestimonial < totalTestimonials - 1) {
+                    currentTestimonial++;
+                    updateSlider();
+                }
+            };
+        }
+        
+        if (prevBtn) {
+            prevBtn.onclick = function() {
+                if (currentTestimonial > 0) {
+                    currentTestimonial--;
+                    updateSlider();
+                }
+            };
+        }
+        
+        // Auto-slide
+        let autoSlide;
+        function startAutoSlide() {
+            autoSlide = setInterval(function() {
+                if (currentTestimonial >= totalTestimonials - 1) {
+                    currentTestimonial = 0;
+                } else {
+                    currentTestimonial++;
+                }
+                updateSlider();
+            }, 5000);
+        }
+        
+        const testimonialsSection = document.querySelector('.testimonials-section');
+        if (testimonialsSection) {
+            testimonialsSection.addEventListener('mouseenter', function() {
+                clearInterval(autoSlide);
+            });
+            testimonialsSection.addEventListener('mouseleave', function() {
+                startAutoSlide();
+            });
+        }
+        
+        createDots();
+        updateSlider();
+        startAutoSlide();
+    }
+    
+    // Update clear all button visibility
+    function updateClearAllButton() {
+        const testimonials = getTestimonials();
+        if (clearAllBtn) {
+            if (testimonials.length > 0 && testimonialsDisplay.style.display === 'block') {
+                clearAllBtn.style.display = 'inline-block';
+            } else {
+                clearAllBtn.style.display = 'none';
+            }
+        }
+    }
+    
+    // Load testimonials on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        const testimonials = getTestimonials();
+        if (testimonials.length > 0) {
+            testimonialsDisplay.style.display = 'block';
+            formContainer.style.display = 'none';
+            toggleFormBtn.style.display = 'inline-block';
+            toggleDisplayBtn.style.display = 'none';
+            loadAndDisplayTestimonials();
+            updateClearAllButton();
+        } else {
+            testimonialsDisplay.style.display = 'none';
+            formContainer.style.display = 'block';
+            toggleFormBtn.style.display = 'none';
+            toggleDisplayBtn.style.display = 'none';
+            if (clearAllBtn) clearAllBtn.style.display = 'none';
+        }
+    });
+    
+    // Also load testimonials after form submission
+    if (testimonialForm) {
+        const originalSubmit = testimonialForm.onsubmit;
+        testimonialForm.addEventListener('submit', function(e) {
+            // Let the form submission handler run first
+            setTimeout(function() {
+                const testimonials = getTestimonials();
+                if (testimonials.length > 0) {
+                    testimonialsDisplay.style.display = 'block';
+                    formContainer.style.display = 'none';
+                    toggleFormBtn.style.display = 'inline-block';
+                    toggleDisplayBtn.style.display = 'none';
+                    loadAndDisplayTestimonials();
+                }
+            }, 100);
+        });
+    }
+})();
+
