@@ -20,6 +20,7 @@
                     <li class="nav-item"><a href="#expertise" class="nav-anchor">Skills</a></li>
                     <li class="nav-item"><a href="#work" class="nav-anchor">Projects</a></li>
                     <li class="nav-item"><a href="#achievements" class="nav-anchor">Achievements</a></li>
+                    <li class="nav-item"><a href="#academic-achievements" class="nav-anchor">Leadership</a></li>
                     <li class="nav-item"><a href="#resume" class="nav-anchor">Resume</a></li>
                     <li class="nav-item"><a href="#testimonials" class="nav-anchor">Testimonials</a></li>
                     <li class="nav-item"><a href="#reach-out" class="nav-anchor">Contact</a></li>
@@ -252,7 +253,12 @@
         <section id="work" class="work-section">
             <div class="wrapper">
                 <h2 class="section-heading">My Works</h2>
-                <div class="work-grid">
+                <div class="work-slider-wrapper">
+                    <button class="work-slider-btn work-prev-btn" aria-label="Previous">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="work-slider-container">
+                        <div class="work-slider-track">
                     <div class="work-card">
                         <div class="work-image-area">
                             <img src="images/getquote.png" alt="Request Quote App" class="work-image">
@@ -322,7 +328,58 @@
                             </div>
                         </div>
                     </div>
+                    <div class="work-card">
+                        <div class="work-image-area">
+                            <img src="images/hospital.png" alt="Hospital Management System" class="work-image">
+                            <div class="work-overlay">
+                                <a href="#" class="work-action-btn" aria-label="View project">
+                                    <i class="fas fa-link"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="work-details">
+                            <h3 class="work-title">Hospital Management System</h3>
+                            <p class="work-summary">
+                                Developed a Java-based hospital management system using Spring and Hibernate, with MySQL (JDBC) for data management, Git for version control, and JUnit for testing. The system provides comprehensive functionality for managing patient records, appointments, staff, and hospital operations efficiently.
+                            </p>
+                            <div class="tech-badges">
+                                <span class="badge">Java</span>
+                                <span class="badge">Hibernate</span>
+                                <span class="badge">MySQL</span>
+                                <span class="badge">Postman</span>
+                                <span class="badge">Git</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="work-card">
+                        <div class="work-image-area">
+                            <img src="images/aquaa_AI.jpg" alt="AQUA_AI System" class="work-image">
+                            <div class="work-overlay">
+                                <a href="#" class="work-action-btn" aria-label="View project">
+                                    <i class="fas fa-link"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="work-details">
+                            <h3 class="work-title">AQUA_AI: Autonomous Water Hyacinth Detection and Removal System</h3>
+                            <p class="work-summary">
+                                AQUA_Al is an autonomous system for detecting and removing water hyacinths using Al, computer vision, and IoT, with real-time monitoring via a mobile app. The project is recognized with an Indian patent.
+                            </p>
+                            <div class="tech-badges">
+                                <span class="badge">Python</span>
+                                <span class="badge">Machine Learning</span>
+                                <span class="badge">Computer Vision</span>
+                                <span class="badge">IoT</span>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+                    <button class="work-slider-btn work-next-btn" aria-label="Next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
+                <div class="work-slider-dots"></div>
             </div>
         </section>
 
@@ -526,54 +583,23 @@
             </div>
         </section>
 
-        <section id="reach-out" class="contact-section">
+        <section id="academic-achievements" class="academic-achievements-section">
             <div class="wrapper">
-                <h2 class="section-heading">Let's Connect</h2>
-                <div class="contact-layout">
-                    <aside class="contact-sidebar">
-                        <h3 class="contact-heading">Want to collaborate?</h3>
-                        <p class="contact-intro">
-                            I’m open to thrilling new opportunities to learn, innovate, and grow.
-                            Feel free to reach out if you have an opportunities or ideas you'd like to discuss.
-                        </p>
-                        <div class="contact-methods">
-                            <div class="method-item">
-                                <i class="fas fa-envelope-open method-icon"></i>
-                                <span class="method-text">parvathijaya111@gmail.com, parvathijaya11@gmail.com </span>
-                            </div>
-                            <div class="method-item">
-                                <i class="fas fa-phone-alt method-icon"></i>
-                                <span class="method-text">+91 8590930377</span>
-                            </div>
-                            <div class="method-item">
-                                <i class="fas fa-map-marker-alt method-icon"></i>
-                                <span class="method-text">Kochi, Kerala, India</span>
-                            </div>
-                        </div>
-                        <div class="social-container">
-                            <a href="https://github.com/parvathis-12/" target="_blank" class="social-button" aria-label="GitHub profile">
-                                <i class="fab fa-github"></i>
-                            </a>
-                            <a href="https://linkedin.com/in/parvathi-s-253781220" target="_blank" class="social-button" aria-label="LinkedIn profile">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                        </div>
-                    </aside>
-                    <form class="message-form" id="contactForm">
-                        <div class="input-wrapper">
-                            <input type="text" class="form-input" placeholder="Full Name" required>
-                        </div>
-                        <div class="input-wrapper">
-                            <input type="email" class="form-input" placeholder="Email Address" required>
-                        </div>
-                        <div class="input-wrapper">
-                            <input type="text" class="form-input" placeholder="Subject Line" required>
-                        </div>
-                        <div class="input-wrapper">
-                            <textarea class="form-textarea" placeholder="Your Message" rows="6" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">Send me a Message</button>
-                    </form>
+                <h2 class="section-heading">Academic & Other Achievements</h2>
+                <p class="section-subtitle">Beyond academics and work, I have held leadership roles such as:</p>
+                <div class="academic-achievements-list">
+                    <div class="academic-achievement-item">
+                        <i class="fas fa-user-tie academic-icon"></i>
+                        <span class="academic-achievement-name">Volunteer Secretary for NSS at TIST</span>
+                    </div>
+                    <div class="academic-achievement-item">
+                        <i class="fas fa-user-tie academic-icon"></i>
+                        <span class="academic-achievement-name">Women Entrepreneurship Lead at IEDC</span>
+                    </div>
+                    <div class="academic-achievement-item">
+                        <i class="fas fa-user-tie academic-icon"></i>
+                        <span class="academic-achievement-name">Vice-Chairperson at IgnIT</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -829,6 +855,58 @@
                 <div class="lightbox-nav">
                     <button class="lightbox-prev">&#10094;</button>
                     <button class="lightbox-next">&#10095;</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="reach-out" class="contact-section">
+            <div class="wrapper">
+                <h2 class="section-heading">Let's Connect</h2>
+                <div class="contact-layout">
+                    <aside class="contact-sidebar">
+                        <h3 class="contact-heading">Want to collaborate?</h3>
+                        <p class="contact-intro">
+                            I'm open to thrilling new opportunities to learn, innovate, and grow.
+                            Feel free to reach out if you have an opportunities or ideas you'd like to discuss.
+                        </p>
+                        <div class="contact-methods">
+                            <div class="method-item">
+                                <i class="fas fa-envelope-open method-icon"></i>
+                                <span class="method-text">parvathijaya111@gmail.com, parvathijaya11@gmail.com </span>
+                            </div>
+                            <div class="method-item">
+                                <i class="fas fa-phone-alt method-icon"></i>
+                                <span class="method-text">+91 8590930377</span>
+                            </div>
+                            <div class="method-item">
+                                <i class="fas fa-map-marker-alt method-icon"></i>
+                                <span class="method-text">Kochi, Kerala, India</span>
+                            </div>
+                        </div>
+                        <div class="social-container">
+                            <a href="https://github.com/parvathis-12/" target="_blank" class="social-button" aria-label="GitHub profile">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://linkedin.com/in/parvathi-s-253781220" target="_blank" class="social-button" aria-label="LinkedIn profile">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </aside>
+                    <form class="message-form" id="contactForm">
+                        <div class="input-wrapper">
+                            <input type="text" class="form-input" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <input type="email" class="form-input" placeholder="Email Address" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <input type="text" class="form-input" placeholder="Subject Line" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <textarea class="form-textarea" placeholder="Your Message" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-button">Send me a Message</button>
+                    </form>
                 </div>
             </div>
         </section>

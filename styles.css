@@ -38,13 +38,15 @@ body {
 
 /* Header Styles */
 .main-header {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    width: 100%;
     background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     z-index: 999;
     transition: box-shadow 0.3s;
+    will-change: transform;
 }
 
 .main-header.scrolled {
@@ -580,6 +582,14 @@ section {
     .slider-wrapper {
         padding: 0 50px;
     }
+    
+    .work-slider-track .work-card {
+        flex: 0 0 calc(50% - 16px);
+    }
+    
+    .work-slider-wrapper {
+        padding: 0 50px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -852,10 +862,30 @@ section {
     background: var(--lighter-gray);
 }
 
-.work-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+.work-slider-wrapper {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+.work-slider-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.work-slider-track {
+    display: flex;
+    transition: transform 0.5s ease;
     gap: 32px;
+    will-change: transform;
+}
+
+.work-slider-track .work-card {
+    flex: 0 0 calc(33.333% - 22px);
+    min-width: 320px;
+    max-width: 100%;
 }
 
 .work-card {
@@ -944,6 +974,52 @@ section {
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
+}
+
+/* Work Slider Controls */
+.work-slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--white);
+    border: 2px solid var(--main-black);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    color: var(--main-black);
+    font-size: 1.2rem;
+}
+
+.work-slider-btn:hover:not(:disabled) {
+    background: var(--main-black);
+    color: var(--white);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.work-slider-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.work-prev-btn {
+    left: 0;
+}
+
+.work-next-btn {
+    right: 0;
+}
+
+.work-slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
 }
 
 /* Contact Section */
@@ -1271,11 +1347,25 @@ section {
 .blog-section {
     background: var(--white);
     overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 0;
+}
+
+.blog-section .wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .blog-slider-container {
     width: 100%;
     overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .blog-row {
@@ -1528,6 +1618,86 @@ section {
 
 .certificate-close:hover {
     transform: scale(1.2);
+}
+
+/* Academic & Other Achievements Section */
+.academic-achievements-section {
+    background: var(--white);
+    padding: 80px 0;
+}
+
+.academic-achievements-section .section-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+}
+
+.academic-achievements-list {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.academic-achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 28px;
+    background: var(--lighter-gray);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+    border-left: 4px solid var(--main-black);
+}
+
+.academic-achievement-item:hover {
+    transform: translateX(10px);
+    box-shadow: var(--card-shadow-hover);
+    background: var(--white);
+}
+
+.academic-icon {
+    color: var(--main-black);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.academic-achievement-name {
+    flex: 1;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* Responsive styles for Academic Achievements */
+@media (max-width: 768px) {
+    .academic-achievements-section {
+        padding: 60px 0;
+    }
+    
+    .academic-achievements-section .section-subtitle {
+        font-size: 1rem;
+        padding: 0 20px;
+    }
+    
+    .academic-achievement-item {
+        padding: 20px;
+        gap: 16px;
+    }
+    
+    .academic-achievement-name {
+        font-size: 1rem;
+    }
+    
+    .academic-icon {
+        font-size: 1.3rem;
+    }
 }
 
 /* Resume Section */
@@ -2315,6 +2485,11 @@ section {
 }
 
 @media (max-width: 768px) {
+    .blog-section {
+        min-height: 100vh;
+        padding: 60px 0;
+    }
+    
     .blog-item {
         flex: 0 0 220px;
         height: 220px;
@@ -2383,4 +2558,555 @@ section {
     .circuit-line {
         width: 100px;
     }
+}
+
+/* Comprehensive Mobile Responsive Fixes */
+@media (max-width: 768px) {
+    /* Base wrapper padding for mobile */
+    .wrapper {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    /* Header fixes */
+    .main-header .wrapper {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .logo-image {
+        height: 40px;
+        max-width: 150px;
+    }
+    
+    .brand-name {
+        height: 40px;
+    }
+    
+    .menu-toggle {
+        padding: 6px;
+    }
+    
+    .bar {
+        width: 24px;
+        height: 2.5px;
+    }
+    
+    /* Section padding */
+    section {
+        padding: 60px 0;
+    }
+    
+    /* Section headings */
+    .section-heading {
+        font-size: 2rem;
+        margin-bottom: 30px;
+        padding: 0 10px;
+    }
+    
+    /* Intro section mobile */
+    .intro-section {
+        padding: 100px 0 60px;
+        min-height: auto;
+    }
+    
+    .intro-wrapper {
+        gap: 40px;
+    }
+    
+    .intro-visual {
+        margin-top: 30px;
+    }
+    
+    /* Intro Section */
+    .intro-description {
+        font-size: 1rem;
+        padding: 0 10px;
+        line-height: 1.7;
+    }
+    
+    .role-text {
+        font-size: 1.3rem;
+        margin: 10px 0;
+    }
+    
+    .action-buttons {
+        gap: 12px;
+        margin-top: 24px;
+    }
+    
+    .cta-button {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+    }
+    
+    /* Bio Section */
+    .bio-paragraph {
+        font-size: 1rem;
+        padding: 0 10px;
+        text-align: left;
+    }
+    
+    .achievement-box {
+        padding: 24px 16px;
+    }
+    
+    .achievement-number {
+        font-size: 2.25rem;
+    }
+    
+    /* Expertise Section */
+    .slider-wrapper {
+        padding: 0 40px;
+    }
+    
+    .tech-item {
+        padding: 28px 20px;
+        min-width: 100%;
+    }
+    
+    .tech-icon {
+        font-size: 3rem;
+    }
+    
+    .tech-name {
+        font-size: 1rem;
+    }
+    
+    /* Work Section */
+    .work-slider-wrapper {
+        padding: 0 50px;
+    }
+    
+    .work-slider-track .work-card {
+        flex: 0 0 calc(50% - 16px);
+        min-width: 100%;
+    }
+    
+    .work-slider-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .work-prev-btn {
+        left: 10px;
+    }
+    
+    .work-next-btn {
+        right: 10px;
+    }
+    
+    .work-card {
+        margin: 0 auto;
+        max-width: 100%;
+    }
+    
+    .work-image-area {
+        height: 200px;
+    }
+    
+    .work-title {
+        font-size: 1.3rem;
+    }
+    
+    .work-description {
+        font-size: 0.95rem;
+    }
+    
+    .work-details {
+        padding: 20px;
+    }
+    
+    .work-title {
+        font-size: 1.25rem;
+    }
+    
+    .work-summary {
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+    }
+    
+    .tech-badges {
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+    
+    .badge {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .work-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .work-link {
+        width: 100%;
+        text-align: center;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .work-slider-wrapper {
+        padding: 0 40px;
+    }
+    
+    .work-slider-track .work-card {
+        flex: 0 0 100%;
+    }
+    
+    /* Testimonials Section */
+    .testimonials-section {
+        padding: 60px 0;
+    }
+    
+    .testimonial-form-container {
+        padding: 24px 16px;
+    }
+    
+    .form-input,
+    .form-textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 12px 16px;
+    }
+    
+    .star-rating-input {
+        gap: 8px;
+    }
+    
+    .star-label {
+        font-size: 1.5rem;
+    }
+    
+    .submit-testimonial-btn {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+    
+    .testimonial-toggle {
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 16px;
+    }
+    
+    .toggle-form-btn,
+    .toggle-display-btn {
+        width: 100%;
+    }
+    
+    /* Resume Section */
+    .resume-section {
+        padding: 60px 0;
+    }
+    
+    .resume-card {
+        padding: 30px 20px;
+        margin: 0 10px;
+    }
+    
+    .resume-download-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+    
+    /* Achievements Section */
+    .achievements-section {
+        padding: 60px 0;
+    }
+    
+    .achievements-list {
+        padding: 0 10px;
+    }
+    
+    .achievement-item {
+        padding: 18px 16px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .achievement-icon {
+        font-size: 1.3rem;
+    }
+    
+    .achievement-name {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    /* Academic Achievements Section */
+    .academic-achievements-section {
+        padding: 60px 0;
+    }
+    
+    .academic-achievements-section .section-subtitle {
+        font-size: 1rem;
+        padding: 0 16px;
+        margin-bottom: 30px;
+    }
+    
+    .academic-achievements-list {
+        padding: 0 10px;
+    }
+    
+    .academic-achievement-item {
+        padding: 20px 16px;
+        gap: 16px;
+    }
+    
+    .academic-achievement-name {
+        font-size: 1rem;
+    }
+    
+    /* Blog Section */
+    .blog-section {
+        padding: 60px 0;
+    }
+    
+    .blog-section .section-heading {
+        margin-bottom: 30px;
+    }
+    
+    /* Contact Section */
+    .contact-section {
+        padding: 60px 0;
+    }
+    
+    .contact-layout {
+        gap: 30px;
+    }
+    
+    .contact-sidebar {
+        padding: 24px 20px;
+    }
+    
+    .contact-heading {
+        font-size: 1.5rem;
+    }
+    
+    .contact-intro {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    
+    .method-item {
+        padding: 12px 0;
+        gap: 12px;
+    }
+    
+    .method-icon {
+        font-size: 1.1rem;
+    }
+    
+    .method-text {
+        font-size: 0.9rem;
+        word-break: break-word;
+    }
+    
+    .social-container {
+        justify-content: center;
+        gap: 16px;
+        margin-top: 24px;
+    }
+    
+    .social-button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+    
+    .message-form {
+        padding: 24px 20px;
+    }
+    
+    .form-input,
+    .form-textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .submit-button {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+    
+    /* Footer */
+    .site-footer {
+        padding: 40px 16px;
+        text-align: center;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* Lightbox adjustments */
+    .lightbox-content {
+        width: 95%;
+        margin-top: 10vh;
+    }
+    
+    .lightbox-nav {
+        padding: 0 15px;
+    }
+    
+    .lightbox-prev,
+    .lightbox-next {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+    }
+    
+    /* Certificate modal */
+    .certificate-content {
+        width: 95%;
+        margin-top: 10vh;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small devices */
+    .wrapper {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    section {
+        padding: 50px 0;
+    }
+    
+    .section-heading {
+        font-size: 1.75rem;
+        margin-bottom: 25px;
+    }
+    
+    .main-heading {
+        font-size: 1.75rem;
+        line-height: 1.3;
+    }
+    
+    .role-text {
+        font-size: 1.1rem;
+    }
+    
+    .intro-description {
+        font-size: 0.95rem;
+    }
+    
+    .bio-paragraph {
+        font-size: 0.95rem;
+    }
+    
+    .achievement-number {
+        font-size: 2rem;
+    }
+    
+    .tech-icon {
+        font-size: 2.5rem;
+    }
+    
+    .work-title {
+        font-size: 1.2rem;
+    }
+    
+    .work-description {
+        font-size: 0.9rem;
+    }
+    
+    .testimonial-content {
+        padding: 24px 16px;
+    }
+    
+    .testimonial-text {
+        font-size: 1rem;
+    }
+    
+    .author-name {
+        font-size: 1.1rem;
+    }
+    
+    .author-role,
+    .author-company {
+        font-size: 0.9rem;
+    }
+    
+    .resume-title {
+        font-size: 1.3rem;
+    }
+    
+    .resume-description {
+        font-size: 0.95rem;
+    }
+    
+    .achievement-name {
+        font-size: 0.95rem;
+    }
+    
+    .academic-achievement-name {
+        font-size: 0.95rem;
+    }
+    
+    .blog-item {
+        flex: 0 0 180px;
+        height: 180px;
+    }
+    
+    .contact-heading {
+        font-size: 1.3rem;
+    }
+    
+    .contact-intro {
+        font-size: 0.9rem;
+    }
+    
+    .method-text {
+        font-size: 0.85rem;
+    }
+    
+    /* Header extra small */
+    .logo-image {
+        height: 35px;
+        max-width: 120px;
+    }
+    
+    .main-header .wrapper {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    
+    /* Prevent text overflow */
+    * {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Ensure no horizontal scroll */
+    body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    html {
+        overflow-x: hidden;
+    }
+}
+
+/* Prevent horizontal scrolling on all devices */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+* {
+    max-width: 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
 }
